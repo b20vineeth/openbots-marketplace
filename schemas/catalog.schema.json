@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/b20vineeth/openbots-marketplace/schemas/catalog.schema.json",
+  "title": "OpenBots Marketplace Catalog",
+  "description": "The index of installable OpenBots extensions published by the official marketplace or a trusted custom source. Every entry pins one immutable Git commit and one release tag.",
+  "type": "object",
+  "required": ["schemaVersion", "catalogVersion", "generatedAt", "extensions"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "description": "Catalog document format. Increment only for a breaking format change.",
+      "const": 1
+    },
+    "catalogVersion": {
+      "description": "Monotonic catalog revision, YYYY.MM.DD[.N]. Clients use it to order and compare snapshots.",
+      "type": "string",
+      "pattern": "^[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}(?:\\.[0-9]+)?$"
+    },
+    "generatedAt": {
+      "description": "UTC timestamp of the catalog build.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "extensions": {
+      "description": "Installable extensions. An empty array is a valid catalog.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/extension" }
+    }
+  },
+  "$defs": {
+    "httpsUrl": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://[^@\\s]+$"
+    },
+    "extension": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "description",
+        "type",
+        "category",
+        "publisher",
+        "version",
+        "repository",
+        "compatibility",
+        "icon",
+        "tags",
+        "documentation",
+        "status"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Stable reverse-DNS extension identity, unique across the catalog.",
+          "type": "string",
+          "pattern": "^[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?\\.[a-z0-9][a-z0-9._-]*$"
+        },
+        "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "description": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "type": {
+          "description": "Runtime class. Skills and MCP/UTCP entries are metadata; plugins execute in-process.",
+          "type": "string",
+          "enum": ["plugin", "skill", "mcp", "utcp"]
+        },
+        "category": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "publisher": {
+          "type": "object",
+          "required": ["id", "name", "verified"],
+          "additionalProperties": false,
+          "properties": {
+            "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$" },
+            "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+            "verified": {
+              "description": "True only when the publisher identity was reviewed by the marketplace maintainers.",
+              "type": "boolean"
+            }
+          }
+        },
+        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$" },
+        "repository": {
+          "type": "object",
+          "required": ["url", "tag", "commit", "manifestPath", "digest"],
+          "additionalProperties": false,
+          "properties": {
+            "url": { "$ref": "#/$defs/httpsUrl" },
+            "tag": {
+              "description": "Release tag; it must resolve to the pinned commit.",
+              "type": "string",
+              "pattern": "^v?[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$"
+            },
+            "commit": {
+              "description": "Full immutable commit SHA-1. Branches, short SHAs and moving refs are invalid.",
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "manifestPath": {
+              "description": "Repository-relative path to the extension manifest.",
+              "type": "string",
+              "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._-]+(?:/[A-Za-z0-9._-]+)*$"
+            },
+            "digest": {
+              "description": "SHA-256 of the deterministic Git release archive for the pinned commit.",
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          }
+        },
+        "compatibility": {
+          "type": "object",
+          "required": ["openbots", "platforms"],
+          "additionalProperties": false,
+          "properties": {
+            "openbots": {
+              "description": "Semver range of supported OpenBots versions.",
+              "type": "string",
+              "pattern": "^[<>=^~*0-9][<>=^~*0-9. |+-]*$"
+            },
+            "platforms": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": { "type": "string", "enum": ["win32", "darwin", "linux"] }
+            }
+          }
+        },
+        "icon": {
+          "type": "string",
+          "pattern": "^icons/[A-Za-z0-9._-]+\\.(?:png|svg|webp)$"
+        },
+        "tags": {
+          "type": "array",
+          "maxItems": 12,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" }
+        },
+        "documentation": { "$ref": "#/$defs/httpsUrl" },
+        "status": {
+          "type": "object",
+          "required": ["enabled", "revoked"],
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "description": "False hides the entry from discovery without deleting its history.",
+              "type": "boolean"
+            },
+            "revoked": {
+              "description": "True blocks new installs and flags installed copies for removal.",
+              "type": "boolean"
+            },
+            "revokedReason": { "type": "string", "minLength": 1, "maxLength": 500 }
+          }
+        }
+      }
+    }
+  }
+}
