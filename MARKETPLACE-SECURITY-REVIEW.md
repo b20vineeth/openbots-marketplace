@@ -87,7 +87,9 @@ verification, revocation. Audit records are append-only and survive restart.
 - The packaged Windows installer and the sandbox launcher are blocked by the same host policy; this is
   an environment limitation, not a passing control.
 - macOS verification is unavailable; no platform claim is made for it.
-- CI cannot run jobs because of the account billing condition; local checks are the current evidence.
+- CI runs on the marketplace repository (the catalog workflow passed on run `45708623189`), but the
+  OpenBots repository's jobs remain blocked by the account billing condition, so OpenBots-side checks
+  are local evidence only.
 
 ## Provider compatibility notes
 

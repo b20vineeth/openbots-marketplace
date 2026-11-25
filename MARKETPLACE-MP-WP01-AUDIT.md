@@ -30,7 +30,7 @@ No claim is made from memory or from the earlier audit.
 | Plugin list defect | Reproduced against the server test harness at this HEAD; see §5 |
 | Packaged Windows rerun | **Not performed** in this pass — it needs the 860 MB packaged build; carried to MP-WP09 |
 | macOS | **Not available**; no claim of verification |
-| GitHub Actions | Still blocked by the account billing condition recorded in WP-R00B; local checks are the only signal |
+| GitHub Actions | **Executes on this repository**: the catalog workflow run `45708623189` concluded `success`. The OpenBots repository's jobs remain blocked by the account billing condition recorded in WP-R00B, so OpenBots-side checks stay local |
 | Marketplace repository at start | Docs only (`MARKETPLACE-*.md`, placeholder README); remote reachable over HTTPS; empty catalog absent |
 
 ---
@@ -154,7 +154,7 @@ Recorded in WP-R00B as P3 and previously uninvestigated. Investigation in this p
 | D-WP-R00-17 | Partial, owner action | `pwsh`/`rg` absent on the host; affects diagnostic and one installer test, not catalog code |
 | Sandbox launcher | Blocked by host Application Control | Plugin/extension isolation cannot be demonstrated on this host; MP-WP05 must fail closed rather than claim isolation |
 | NSIS installer | Blocked by host Application Control | Packaged installer verification remains unavailable |
-| GitHub Actions | Blocked by account billing | The new catalog workflow cannot execute yet; local validator is the evidence |
+| GitHub Actions | Blocked for `openBots` | The catalog workflow executes on this repository; OpenBots-side jobs still cannot start, so OpenBots checks remain local |
 
 ---
 
@@ -259,7 +259,7 @@ only after WP04's configuration and credential model exists.
 | Credentials in repository URL | fixture | **FAIL as intended**: `does not match ^https://[^@\s]+$` |
 | Plugin list defect reproduction | `bun test test/tmp-repro.test.ts` in `packages/server` | **1 pass, 0 fail**; plugin visible in scoped and unscoped lists; test removed |
 | Production code changed | `git status` in `openbots-dev` | No source change by this package |
-| CI | workflow added | **Not executable** — GitHub Actions blocked by the account billing condition |
+| CI on this repository | workflow `validate-catalog.yml` | **PASS** — check run `validate` completed `success`, run `45708623189` |
 
 Negative fixtures ran against a temporary copy of `scripts/`, `schemas/`, `icons/` and
 `catalog.json`, so the published catalog was never replaced by invalid data.
@@ -276,6 +276,7 @@ Negative fixtures ran against a temporary copy of `scripts/`, `schemas/`, `icons
 | Negative fixtures | 6 of 6 rejected with the intended message; complete entry accepted |
 | Reproducer for D-WP-R00-23 | single focused server test, 1 pass / 0 fail, removed after the run |
 | OpenBots tree | unchanged by this package (no source file added, removed or modified) |
+| CI | GitHub Actions ran the new workflow on the pull request and reported `validate: success` (run `45708623189`, job `139536944969`) |
 
 ---
 
