@@ -1,5 +1,11 @@
 # OpenBots Gate A: Discover Marketplace Architecture Audit
 
+> **Superseded by [MARKETPLACE-MP-WP01-AUDIT.md](MARKETPLACE-MP-WP01-AUDIT.md) (2026-11-25).**
+> Kept as history. Three statements are no longer current: the OpenBots baseline moved from
+> `92914f67` to `b2dd3a39`; the approved design is a root `catalog.json` with per-extension Git
+> repositories (not a signed `catalog/index.json`); and D-WP-R00-23 (packaged plugin list) was added
+> and investigated in MP-WP01, where it did not reproduce at source level.
+
 Date: 2026-11-22  
 Status: **Audit complete, implementation not started**  
 Scope: OpenBots source checkout observed at `D:\app\proj\openbots-dev`, commit `92914f67e4827dd159c5b7a8de0cf26ad43e1429` on `fix/OB-project-folder-icons`.

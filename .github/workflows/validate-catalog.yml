@@ -1,0 +1,24 @@
+name: Validate catalog
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      # The validator has no dependencies: catalog review stays reproducible and free of
+      # third-party supply chain risk.
+      - name: Validate catalog and schemas
+        run: node scripts/validate-catalog.mjs
